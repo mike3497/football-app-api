@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.get('/', (req, res) => {
-	res.json({ message: 'Hello world!' });
+	res.send('<p>Football App API!</p>');
 });
 
 app.use('/api/users', require('./routes/user.routes'));
