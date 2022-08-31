@@ -2,12 +2,14 @@ const mongoose = require('mongoose');
 
 const pickSchema = mongoose.Schema(
 	{
-		userId: {
-			type: String,
+		user: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'User',
 			required: true,
 		},
-		gameId: {
-			type: String,
+		game: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Game',
 			required: true,
 		},
 		teamId: {

@@ -6,6 +6,8 @@ const { errorHandler } = require('./middleware/error.middleware');
 const connectDB = require('./config/db.config');
 const port = process.env.PORT || 5000;
 const cors = require('cors');
+const cron = require('node-cron');
+const { updateGames } = require('./tasks/collegefootballdata.tasks');
 
 connectDB();
 
@@ -22,6 +24,7 @@ app.get('/', (req, res) => {
 app.use('/api/users', require('./routes/user.routes'));
 app.use('/api/games', require('./routes/game.routes'));
 app.use('/api/picks', require('./routes/pick.routes'));
+app.use('/api/leaderboard', require('./routes/leaderboard.routes'));
 
 app.use(errorHandler);
 

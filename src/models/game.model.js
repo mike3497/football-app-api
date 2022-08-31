@@ -26,6 +26,18 @@ const gameSchema = mongoose.Schema(
 			type: String,
 			required: true,
 		},
+		homeTeamScore: {
+			type: Number,
+		},
+		awayTeamScore: {
+			type: Number,
+		},
+		winningTeamId: {
+			type: String,
+		},
+		winningTeam: {
+			type: String,
+		},
 	},
 	{
 		timestamps: true,
