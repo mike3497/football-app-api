@@ -1,9 +1,9 @@
 const express = require('express');
-const { getAllGames, updateGames } = require('../controllers/game.controller');
+const { updateGames, getGames } = require('../controllers/game.controller');
 const router = express.Router();
 const { protect } = require('../middleware/auth.middleware');
 
-router.get('/', protect, getAllGames);
-router.post('/update', updateGames);
+router.get('/', protect, getGames);
+router.post('/', updateGames);
 
 module.exports = router;

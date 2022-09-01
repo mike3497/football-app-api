@@ -44,6 +44,7 @@ async function callCollegeFootballDataApi(year, week) {
 
 		const newGame = {
 			apiId: game.id,
+			week: game.week,
 			date: game.start_date,
 			homeTeamId: game.home_id,
 			homeTeam: game.home_team,

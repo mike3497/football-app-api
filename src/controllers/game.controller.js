@@ -4,8 +4,15 @@ const {
 	callCollegeFootballDataApi,
 } = require('../helpers/collegefootballdata.helpers');
 
-const getAllGames = asyncHandler(async (req, res) => {
-	const games = await Game.find();
+const getGames = asyncHandler(async (req, res) => {
+	const week = Number(req.query.week);
+	let games;
+
+	games = await Game.find();
+
+	if (week) {
+		games = await Game.find({ week });
+	}
 
 	res.send(games);
 });
@@ -18,6 +25,6 @@ const updateGames = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
-	getAllGames,
+	getGames,
 	updateGames,
 };

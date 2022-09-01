@@ -6,6 +6,10 @@ const gameSchema = mongoose.Schema(
 			type: String,
 			required: true,
 		},
+		week: {
+			type: Number,
+			required: true,
+		},
 		date: {
 			type: Date,
 			required: true,
