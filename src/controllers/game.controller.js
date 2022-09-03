@@ -1,7 +1,8 @@
 const asyncHandler = require('express-async-handler');
 const Game = require('../models/game.model');
 const {
-	callCollegeFootballDataApi,
+	getNewGamesCFBAPI,
+	updateGamesCFBAPI,
 } = require('../helpers/collegefootballdata.helpers');
 
 const getGames = asyncHandler(async (req, res) => {
@@ -17,14 +18,22 @@ const getGames = asyncHandler(async (req, res) => {
 	res.send(games);
 });
 
+const getNewGames = asyncHandler(async (req, res) => {
+	const { year, week } = req.body;
+	const response = await getNewGamesCFBAPI(year, week);
+
+	res.send(response);
+});
+
 const updateGames = asyncHandler(async (req, res) => {
 	const { year, week } = req.body;
-	const response = await callCollegeFootballDataApi(year, week);
+	const response = await updateGamesCFBAPI(year, week);
 
 	res.send(response);
 });
 
 module.exports = {
 	getGames,
+	getNewGames,
 	updateGames,
 };

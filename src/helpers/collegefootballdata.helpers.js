@@ -1,9 +1,9 @@
 const axios = require('axios');
 const Game = require('../models/game.model');
+const apiKey = process.env.COLLEGE_FOOTBAL_DATA_API_KEY;
 
-async function callCollegeFootballDataApi(year, week) {
+async function getNewGamesCFBAPI(year, week) {
 	const startTime = new Date();
-	const apiKey = process.env.COLLEGE_FOOTBAL_DATA_API_KEY;
 
 	const config = {
 		headers: {
@@ -18,7 +18,6 @@ async function callCollegeFootballDataApi(year, week) {
 
 	const gamesFound = games.length;
 	let gamesCreated = 0;
-	let gamesUpdated = 0;
 
 	for (var i = 0; i < games.length; i++) {
 		const game = games[i];
@@ -26,19 +25,6 @@ async function callCollegeFootballDataApi(year, week) {
 
 		const existingGame = await Game.findOne({ apiId: apiId });
 		if (existingGame) {
-			existingGame.homeTeamScore = game.away_points;
-			existingGame.awayTeamScore = game.away_points;
-
-			if (game.home_points > game.away_points) {
-				existingGame.winningTeamId = game.home_id;
-				existingGame.winningTeam = game.home_team;
-			} else if (game.away_points < game.home_points) {
-				existingGame.winningTeamId = game.away_id;
-				existingGame.winningTeam = game.away_team;
-			}
-
-			await existingGame.save();
-			gamesUpdated += 1;
 			continue;
 		}
 
@@ -68,9 +54,55 @@ async function callCollegeFootballDataApi(year, week) {
 	}
 
 	const endTime = new Date();
-	return { startTime, endTime, gamesFound, gamesCreated, gamesUpdated };
+	return { startTime, endTime, gamesFound, gamesCreated };
+}
+
+async function updateGamesCFBAPI(year, week) {
+	const startTime = new Date();
+
+	const config = {
+		headers: {
+			Authorization: `Bearer ${apiKey}`,
+		},
+	};
+
+	const url = `https://api.collegefootballdata.com/games?year=${year}&week=${week}&division=fbs`;
+
+	const result = await axios.get(url, config);
+	const games = result.data;
+
+	const gamesFound = games.length;
+	let gamesUpdated = 0;
+
+	for (var i = 0; i < games.length; i++) {
+		const game = games[i];
+		const apiId = game.id;
+
+		const existingGame = await Game.findOne({ apiId: apiId });
+		if (existingGame) {
+			existingGame.homeTeamScore = game.home_points;
+			existingGame.awayTeamScore = game.away_points;
+
+			if (game.home_points > game.away_points) {
+				existingGame.winningTeamId = game.home_id;
+				existingGame.winningTeam = game.home_team;
+			} else if (game.away_points > game.home_points) {
+				console.log('away winner');
+				existingGame.winningTeamId = game.away_id;
+				existingGame.winningTeam = game.away_team;
+			}
+
+			const result = await existingGame.save();
+			gamesUpdated += 1;
+			continue;
+		}
+	}
+
+	const endTime = new Date();
+	return { startTime, endTime, gamesFound, gamesUpdated };
 }
 
 module.exports = {
-	callCollegeFootballDataApi,
+	getNewGamesCFBAPI,
+	updateGamesCFBAPI,
 };
