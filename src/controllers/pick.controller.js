@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const Pick = require('../models/pick.model');
 const Game = require('../models/game.model');
 const axios = require('axios');
+const hours = process.env.PICK_HOURS;
 
 const getPicks = asyncHandler(async (req, res) => {
 	const userId = req.user._id;
@@ -23,10 +24,10 @@ const addPick = asyncHandler(async (req, res) => {
 
 	const gameDate = game.date;
 	const currentDate = new Date();
-	if (currentDate > subtractHours(gameDate, 12)) {
+	if (currentDate > subtractHours(gameDate, hours)) {
 		res.status(500);
 		throw new Error(
-			'Pick must be made within 12 hours of scheduled game time.'
+			`Pick must be made within ${hours} hours of scheduled game time.`
 		);
 	}
 
