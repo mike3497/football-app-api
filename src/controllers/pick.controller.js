@@ -34,7 +34,7 @@ const addPick = asyncHandler(async (req, res) => {
 		);
 	}
 
-	const existingPick = await Pick.findOne({ game: gameId });
+	const existingPick = await Pick.findOne({ user: userId, game: gameId });
 
 	if (existingPick) {
 		existingPick.teamId = teamId;
