@@ -5,7 +5,10 @@ const axios = require('axios');
 const hours = process.env.PICK_HOURS;
 
 const getPicks = asyncHandler(async (req, res) => {
-	const userId = req.user._id;
+	let userId = req.query.userId;
+	if (userId === 'undefined') {
+		userId = req.user._id;
+	}
 
 	const picks = await Pick.find({ user: userId });
 	res.send(picks);
@@ -31,7 +34,8 @@ const addPick = asyncHandler(async (req, res) => {
 		);
 	}
 
-	const existingPick = await Pick.findOne({ 'game._id': gameId });
+	const existingPick = await Pick.findOne({ game: gameId });
+
 	if (existingPick) {
 		existingPick.teamId = teamId;
 
