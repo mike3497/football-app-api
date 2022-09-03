@@ -13,8 +13,6 @@ const getLeaderboard = asyncHandler(async (req, res) => {
 			.populate('user')
 			.populate('game');
 
-		console.log(picks);
-
 		let correctPicks = 0;
 		for (let i = 0; i < picks.length; i++) {
 			const pick = picks[i];
