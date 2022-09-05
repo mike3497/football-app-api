@@ -87,7 +87,6 @@ async function updateGamesCFBAPI(year, week) {
 				existingGame.winningTeamId = game.home_id;
 				existingGame.winningTeam = game.home_team;
 			} else if (game.away_points > game.home_points) {
-				console.log('away winner');
 				existingGame.winningTeamId = game.away_id;
 				existingGame.winningTeam = game.away_team;
 			}
