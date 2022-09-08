@@ -1,25 +1,20 @@
-const mongoose = require('mongoose');
+const Sequelize = require('sequelize');
+const db = require('../config/db.config');
 
-const pickSchema = mongoose.Schema(
+const Pick = db.define(
+	'pick',
 	{
-		user: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'User',
-			required: true,
-		},
-		game: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Game',
-			required: true,
+		id: {
+			type: Sequelize.UUID,
+			defaultValue: Sequelize.UUIDV4,
+			primaryKey: true,
 		},
 		teamId: {
-			type: String,
-			required: true,
+			type: Sequelize.STRING,
+			allowNull: false,
 		},
 	},
-	{
-		timestamps: true,
-	}
+	{ underscored: true }
 );
 
-module.exports = mongoose.model('Pick', pickSchema);
+module.exports = Pick;

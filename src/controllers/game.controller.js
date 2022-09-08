@@ -6,14 +6,12 @@ const {
 } = require('../helpers/collegefootballdata.helpers');
 
 const getGames = asyncHandler(async (req, res) => {
-	const week = Number(req.query.week);
-	let games;
+	const query = req.query;
 
-	games = await Game.find();
-
-	if (week) {
-		games = await Game.find({ week });
-	}
+	const games = await Game.findAll({
+		where: query,
+		order: [['date', 'ASC']],
+	});
 
 	res.send(games);
 });

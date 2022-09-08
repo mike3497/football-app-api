@@ -1,25 +1,37 @@
 const asyncHandler = require('express-async-handler');
-const Pick = require('../models/pick.model');
-const Game = require('../models/game.model');
-const axios = require('axios');
 const hours = process.env.PICK_HOURS;
 
-const getPicks = asyncHandler(async (req, res) => {
-	let userId = req.query.userId;
-	if (userId === 'undefined') {
-		userId = req.user._id;
-	}
+const Pick = require('../models/pick.model');
+const User = require('../models/user.model');
+const Game = require('../models/game.model');
 
-	const picks = await Pick.find({ user: userId });
+const getPicks = asyncHandler(async (req, res) => {
+	const query = req.query;
+
+	const picks = await Pick.findAll({
+		where: query,
+		include: [
+			{
+				model: User,
+				required: true,
+			},
+		],
+	});
+
 	res.send(picks);
 	return;
 });
 
 const addPick = asyncHandler(async (req, res) => {
-	const userId = req.user._id;
+	const userId = req.user.id;
 	const { gameId, teamId } = req.body;
 
-	const game = await Game.findOne({ _id: gameId });
+	const game = await Game.findOne({
+		where: {
+			id: gameId,
+		},
+	});
+
 	if (!game) {
 		res.status(500);
 		throw new Error(`Game with Id: ${gameId} not found.`);
@@ -34,7 +46,12 @@ const addPick = asyncHandler(async (req, res) => {
 		);
 	}
 
-	const existingPick = await Pick.findOne({ user: userId, game: gameId });
+	const existingPick = await Pick.findOne({
+		where: {
+			userId: userId,
+			gameId: gameId,
+		},
+	});
 
 	if (existingPick) {
 		existingPick.teamId = teamId;
@@ -45,8 +62,8 @@ const addPick = asyncHandler(async (req, res) => {
 	}
 
 	await Pick.create({
-		user: userId,
-		game: gameId,
+		userId: userId,
+		gameId: gameId,
 		teamId,
 	});
 
