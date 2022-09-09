@@ -10,7 +10,10 @@ const getGames = asyncHandler(async (req, res) => {
 
 	const games = await Game.findAll({
 		where: query,
-		order: [['date', 'ASC']],
+		order: [
+			['date', 'ASC'],
+			['homeTeam', 'ASC'],
+		],
 	});
 
 	res.send(games);
