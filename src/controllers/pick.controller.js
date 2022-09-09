@@ -46,12 +46,21 @@ const addPick = asyncHandler(async (req, res) => {
 	const userId = req.user.id;
 	const { gameId, teamId } = req.body;
 
+	const user = await User.findOne({
+		where: {
+			id: userId,
+		},
+	});
+	if (!user) {
+		res.status(500);
+		throw new Error(`User with Id: ${userId} not found.`);
+	}
+
 	const game = await Game.findOne({
 		where: {
 			id: gameId,
 		},
 	});
-
 	if (!game) {
 		res.status(500);
 		throw new Error(`Game with Id: ${gameId} not found.`);
