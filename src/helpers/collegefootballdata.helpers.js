@@ -23,7 +23,11 @@ async function getNewGamesCFBAPI(year, week) {
 		const game = games[i];
 		const apiId = game.id;
 
-		const existingGame = await Game.findOne({ apiId: apiId });
+		const existingGame = await Game.findOne({
+			where: {
+				apiId: apiId,
+			},
+		});
 		if (existingGame) {
 			continue;
 		}
@@ -43,7 +47,7 @@ async function getNewGamesCFBAPI(year, week) {
 		if (game.home_points > game.away_points) {
 			newGame.winningTeamId = game.home_id;
 			newGame.winningTeam = game.home_team;
-		} else if (game.away_points < game.home_points) {
+		} else if (game.away_points > game.home_points) {
 			newGame.winningTeamId = game.away_id;
 			newGame.winningTeam = game.away_team;
 		}
@@ -78,7 +82,11 @@ async function updateGamesCFBAPI(year, week) {
 		const game = games[i];
 		const apiId = game.id;
 
-		const existingGame = await Game.findOne({ apiId: apiId });
+		const existingGame = await Game.findOne({
+			where: {
+				apiId: apiId,
+			},
+		});
 		if (existingGame) {
 			existingGame.homeTeamScore = game.home_points;
 			existingGame.awayTeamScore = game.away_points;
@@ -87,7 +95,6 @@ async function updateGamesCFBAPI(year, week) {
 				existingGame.winningTeamId = game.home_id;
 				existingGame.winningTeam = game.home_team;
 			} else if (game.away_points > game.home_points) {
-				console.log('away winner');
 				existingGame.winningTeamId = game.away_id;
 				existingGame.winningTeam = game.away_team;
 			}

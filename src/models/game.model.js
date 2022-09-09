@@ -1,51 +1,64 @@
-const mongoose = require('mongoose');
+const Sequelize = require('sequelize');
+const db = require('../config/db.config');
+const Pick = require('./pick.model');
 
-const gameSchema = mongoose.Schema(
+const Game = db.define(
+	'game',
 	{
+		id: {
+			type: Sequelize.UUID,
+			defaultValue: Sequelize.UUIDV4,
+			primaryKey: true,
+		},
 		apiId: {
-			type: String,
-			required: true,
+			type: Sequelize.STRING,
+			allowNull: false,
 		},
 		week: {
-			type: Number,
-			required: true,
+			type: Sequelize.INTEGER,
+			allowNull: false,
 		},
 		date: {
-			type: Date,
-			required: true,
+			type: Sequelize.DATE,
+			allowNull: false,
 		},
 		homeTeamId: {
-			type: String,
-			required: true,
+			type: Sequelize.STRING,
+			allowNull: false,
 		},
 		homeTeam: {
-			type: String,
-			required: true,
+			type: Sequelize.STRING,
+			allowNull: false,
 		},
 		awayTeamId: {
-			type: String,
-			required: true,
+			type: Sequelize.STRING,
+			allowNull: false,
 		},
 		awayTeam: {
-			type: String,
-			required: true,
+			type: Sequelize.STRING,
+			allowNull: false,
 		},
 		homeTeamScore: {
-			type: Number,
+			type: Sequelize.INTEGER,
+			allowNull: true,
 		},
 		awayTeamScore: {
-			type: Number,
+			type: Sequelize.INTEGER,
+			allowNull: true,
 		},
 		winningTeamId: {
-			type: String,
+			type: Sequelize.STRING,
+			allowNull: true,
 		},
 		winningTeam: {
-			type: String,
+			type: Sequelize.STRING,
+			allowNull: true,
 		},
 	},
-	{
-		timestamps: true,
-	}
+	{ underscored: true }
 );
 
-module.exports = mongoose.model('Game', gameSchema);
+Game.hasMany(Pick);
+Pick.belongsTo(Game);
+
+module.exports = Game;

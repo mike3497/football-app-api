@@ -1,28 +1,37 @@
-const mongoose = require('mongoose');
+const Sequelize = require('sequelize');
+const db = require('../config/db.config');
+const Pick = require('./pick.model');
 
-const userSchema = mongoose.Schema(
+const User = db.define(
+	'user',
 	{
-		username: {
-			type: String,
-			required: true,
+		id: {
+			type: Sequelize.UUID,
+			defaultValue: Sequelize.UUIDV4,
+			primaryKey: true,
 		},
-		password: {
-			type: String,
-			required: true,
-			select: false,
+		username: {
+			type: Sequelize.STRING,
+			allowNull: false,
+			unique: true,
 		},
 		firstName: {
-			type: String,
-			required: true,
+			type: Sequelize.STRING,
+			allowNull: false,
 		},
 		lastName: {
-			type: String,
-			required: true,
+			type: Sequelize.STRING,
+			allowNull: false,
+		},
+		password: {
+			type: Sequelize.STRING,
+			allowNull: false,
 		},
 	},
-	{
-		timestamps: true,
-	}
+	{ underscored: true }
 );
 
-module.exports = mongoose.model('User', userSchema);
+User.hasMany(Pick);
+Pick.belongsTo(User);
+
+module.exports = User;

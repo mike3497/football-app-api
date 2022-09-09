@@ -4,14 +4,24 @@ const Game = require('../models/game.model');
 const Pick = require('../models/pick.model');
 
 const getLeaderboard = asyncHandler(async (req, res) => {
-	const users = await User.find();
+	const users = await User.findAll({ attributes: { exclude: ['password'] } });
 	let rows = [];
 
 	for (let i = 0; i < users.length; i++) {
 		const user = users[i];
-		const picks = await Pick.find({ user: user._id })
-			.populate('user')
-			.populate('game');
+		const picks = await Pick.findAll({
+			where: { userId: user.id },
+			include: [
+				{
+					model: User,
+					required: true,
+				},
+				{
+					model: Game,
+					required: true,
+				},
+			],
+		});
 
 		let correctPicks = 0;
 		for (let i = 0; i < picks.length; i++) {

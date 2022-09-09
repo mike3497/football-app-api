@@ -11,9 +11,13 @@ const signUp = asyncHandler(async (req, res) => {
 		throw new Error('Please add all fields');
 	}
 
-	const userExists = await User.findOne({ username });
+	const userExists = await User.findAll({
+		where: {
+			username: username,
+		},
+	});
 
-	if (userExists) {
+	if (userExists.length > 0) {
 		res.status(400);
 		throw new Error('Username already exists');
 	}
@@ -46,7 +50,11 @@ const signUp = asyncHandler(async (req, res) => {
 const signIn = asyncHandler(async (req, res) => {
 	const { username, password } = req.body;
 
-	const user = await User.findOne({ username }).select('+password');
+	const user = await User.findOne({
+		where: {
+			username: username,
+		},
+	});
 
 	if (user && (await bcrypt.compare(password, user.password))) {
 		res.json({
@@ -65,6 +73,19 @@ const signIn = asyncHandler(async (req, res) => {
 
 const getMe = asyncHandler(async (req, res) => {
 	res.status(200).json(req.user);
+});
+
+const get = asyncHandler(async (req, res) => {
+	const userId = req.params.userId;
+
+	const user = await User.findOne({
+		where: {
+			id: userId,
+		},
+		attributes: { exclude: ['password'] },
+	});
+
+	res.status(200).json(user);
 });
 
 const generateToken = (user) => {
@@ -89,4 +110,5 @@ module.exports = {
 	signUp,
 	signIn,
 	getMe,
+	get,
 };
