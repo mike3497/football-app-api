@@ -75,6 +75,19 @@ const getMe = asyncHandler(async (req, res) => {
 	res.status(200).json(req.user);
 });
 
+const get = asyncHandler(async (req, res) => {
+	const userId = req.params.userId;
+
+	const user = await User.findOne({
+		where: {
+			id: userId,
+		},
+		attributes: { exclude: ['password'] },
+	});
+
+	res.status(200).json(user);
+});
+
 const generateToken = (user) => {
 	const { id, username, firstName, lastName } = user;
 
@@ -97,4 +110,5 @@ module.exports = {
 	signUp,
 	signIn,
 	getMe,
+	get,
 };
