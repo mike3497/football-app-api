@@ -1,8 +1,13 @@
 const Sequelize = require('sequelize');
-const sequelize = new Sequelize('football_app', 'root', 'N@$c@r3497', {
-	host: 'localhost',
-	port: 3306,
-	dialect: 'mysql',
-});
+const sequelize = new Sequelize(
+	process.env.AWS_MYSQL_DATABASE,
+	process.env.AWS_MYSQL_USERNAME,
+	process.env.AWS_MYSQL_PASSWORD,
+	{
+		host: process.env.AWS_MYSQL_ENDPOINT,
+		port: process.env.AWS_MYSQL_PORT,
+		dialect: 'mysql',
+	}
+);
 
 module.exports = sequelize;
