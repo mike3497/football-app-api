@@ -6,15 +6,35 @@ const User = require('../models/user.model');
 const Game = require('../models/game.model');
 
 const getPicks = asyncHandler(async (req, res) => {
-	const query = req.query;
+	const userId = req.query.userId;
+	const week = req.query.week;
 
-	const picks = await Pick.findAll({
+	const query = {
+		userId,
+	};
+
+	if (week) {
+		query['$game.week$'] = week;
+	}
+
+	let picks = [];
+
+	picks = await Pick.findAll({
 		where: query,
 		include: [
 			{
 				model: User,
 				required: true,
+				attributes: { exclude: ['password'] },
 			},
+			{
+				model: Game,
+				required: true,
+			},
+		],
+		order: [
+			[Game, 'date', 'ASC'],
+			[Game, 'homeTeam', 'ASC'],
 		],
 	});
 
