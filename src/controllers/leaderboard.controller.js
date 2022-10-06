@@ -75,6 +75,78 @@ const getLeaderboard = asyncHandler(async (req, res) => {
 	res.send(rows);
 });
 
+const getLeaderboardChart = asyncHandler(async (req, res) => {
+	const userId = req.params.userId;
+
+	const user = await User.findOne({ where: { id: userId } });
+	if (!user) {
+	}
+
+	let labels = [];
+	let data = [];
+
+	const weeks = await Game.findAll({
+		attributes: ['week'],
+		where: {
+			winningTeam: {
+				[Op.not]: null,
+			},
+		},
+		order: [['week', 'ASC']],
+		group: 'week',
+	});
+
+	for (let i = 0; i < weeks.length; i++) {
+		let week = weeks[i].week;
+		labels.push(week);
+
+		const picks = await Pick.findAll({
+			where: { userId: userId },
+			include: [
+				{
+					model: User,
+					required: true,
+				},
+				{
+					model: Game,
+					required: true,
+					where: {
+						week: week,
+					},
+				},
+			],
+		});
+
+		let correctPicks = 0;
+		for (let i = 0; i < picks.length; i++) {
+			const pick = picks[i];
+			const pickedTeamId = pick.teamId;
+
+			if (pick.game.winningTeamId === pickedTeamId) {
+				correctPicks += 1;
+			}
+		}
+
+		const games = await Game.findAll({
+			where: {
+				week: week,
+				winningTeam: {
+					[Op.not]: null,
+				},
+			},
+		});
+
+		const correctPicksPercentage = Number(
+			(correctPicks / games.length) * 100
+		).toFixed(2);
+
+		data.push(correctPicksPercentage);
+	}
+
+	res.send({ labels, data });
+});
+
 module.exports = {
 	getLeaderboard,
+	getLeaderboardChart,
 };
